@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custodian-service-config
+  namespace: financial-advisory
+data:
+  log_level: "INFO"
+  enable_docs: "true"
+  cors_origins: "http://financial-advisory.local,http://localhost:3002"
+  api_prefix: "/api"
+  openwealth_version: "1.0.0"
+  max_connection_pool_size: "10"
+  request_timeout_seconds: "30"
