@@ -1,0 +1,6 @@
+[submodule "custodian-service"]
+	path = custodian-service
+	url = https://github.com/dnlwrthstr/custodian-service.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/dnlwrthstr/frontend
