@@ -6,4 +6,7 @@
 	url = https://github.com/dnlwrthstr/frontend
 [submodule "search-service"]
 	path = search-service
-	url = https://github.com/dnlwrthstr/search-service.git
+	url = ./search-service
+[submodule "load-custodian-service"]
+	path = load-custodian-service
+	url = ./load-custodian-service

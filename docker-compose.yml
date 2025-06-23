@@ -1,4 +1,48 @@
+version: '3.8'
+
 services:
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    command: 
+      - bash 
+      - -c 
+      - |
+        echo "Generating cluster ID"
+        export CLUSTER_ID=$(/usr/bin/kafka-storage random-uuid)
+        echo "Using cluster ID: $$CLUSTER_ID"
+        echo "$$CLUSTER_ID" > /var/lib/kafka/clusterID
+        mkdir -p /var/lib/kafka/data
+        chmod -R 777 /var/lib/kafka
+        /usr/bin/kafka-storage format -t $$CLUSTER_ID -c /etc/kafka/kraft/server.properties
+        exec /etc/confluent/docker/run
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
   mongo:
     image: mongo:6
     container_name: mongo
@@ -9,7 +53,7 @@ services:
 
   opensearch:
     image: opensearchproject/opensearch:2.11.0
-    container_name: opensearch
+    container_name: financial-advisory-opensearch
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
@@ -24,8 +68,8 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9200:9200"
-      - "9600:9600"
+      - "9201:9200"
+      - "9601:9600"
     volumes:
       - opensearch_data:/usr/share/opensearch/data
 
@@ -36,8 +80,12 @@ services:
       - "8010:8000"
     environment:
       - MONGODB_URL=mongodb://mongo:27017
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TRANSACTION_TOPIC=custodian.transactions
+      - KAFKA_ENABLED=true
     depends_on:
       - mongo
+      - kafka
 
   search-service:
     build: ./search-service
@@ -46,11 +94,25 @@ services:
       - "8020:8000"
     environment:
       - CUSTODIAN_SERVICE_URL=http://custodian-service:8000/api
-      - OPENSEARCH_HOST=opensearch
+      - OPENSEARCH_HOST=financial-advisory-opensearch
       - OPENSEARCH_PORT=9200
       - OPENSEARCH_USE_SSL=false
     depends_on:
       - custodian-service
+      - opensearch
+
+  load-custodian-service:
+    build: ./load-custodian-service
+    container_name: load-custodian-service
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TRANSACTION_TOPIC=custodian.transactions
+      - KAFKA_GROUP_ID=load-custodian-service
+      - OPENSEARCH_HOST=financial-advisory-opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_USE_SSL=false
+    depends_on:
+      - kafka
       - opensearch
 
   frontend:
@@ -66,5 +128,6 @@ services:
       - search-service
 
 volumes:
+  kafka_data:
   mongo_data:
   opensearch_data:
