@@ -4,3 +4,6 @@
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/dnlwrthstr/frontend
+[submodule "search-service"]
+	path = search-service
+	url = https://github.com/dnlwrthstr/search-service.git
