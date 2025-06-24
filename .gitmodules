@@ -10,3 +10,6 @@
 [submodule "load-custodian-service"]
 	path = load-custodian-service
 	url = ./load-custodian-service
+[submodule "load-portfolio-service"]
+	path = load-portfolio-service
+	url = ./load-portfolio-service
