@@ -13,3 +13,6 @@
 [submodule "load-portfolio-service"]
 	path = load-portfolio-service
 	url = ./load-portfolio-service
+[submodule "load-position-service"]
+	path = load-position-service
+	url = ./load-position-service
