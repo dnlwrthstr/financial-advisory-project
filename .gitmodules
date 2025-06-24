@@ -16,3 +16,6 @@
 [submodule "load-position-service"]
 	path = load-position-service
 	url = ./load-position-service
+[submodule "load-account-service"]
+	path = load-account-service
+	url = ./load-account-service
