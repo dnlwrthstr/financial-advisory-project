@@ -140,6 +140,34 @@ services:
       - custodian-service
       - search-service
 
+  load-portfolio-service:
+    build: ./load-portfolio-service
+    container_name: load-portfolio-service
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_PORTFOLIO_TOPIC=custodian.portfolio
+      - KAFKA_GROUP_ID=load-portfolio-service
+      - OPENSEARCH_HOST=financial-advisory-opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_USE_SSL=false
+    depends_on:
+      - kafka
+      - opensearch
+
+  load-position-service:
+    build: ./load-position-service
+    container_name: load-position-service
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_POSITION_TOPIC=custodian.position
+      - KAFKA_GROUP_ID=load-position-service
+      - OPENSEARCH_HOST=financial-advisory-opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_USE_SSL=false
+    depends_on:
+      - kafka
+      - opensearch
+
 volumes:
   kafka_data:
   mongo_data:
