@@ -183,6 +183,20 @@ services:
       - kafka
       - opensearch
 
+  load-transaction-service:
+    build: ./load-transaction-service
+    container_name: load-transaction-service
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TRANSACTION_TOPIC=custodian.transactions
+      - KAFKA_GROUP_ID=load-transaction-service
+      - OPENSEARCH_HOST=financial-advisory-opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_USE_SSL=false
+    depends_on:
+      - kafka
+      - opensearch
+
 volumes:
   kafka_data:
   mongo_data:

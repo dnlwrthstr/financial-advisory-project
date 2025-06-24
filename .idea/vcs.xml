@@ -4,6 +4,7 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/custodian-service" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/frontend" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/load-account-service" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/load-custodian-service" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/load-portfolio-service" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/load-position-service" vcs="Git" />
