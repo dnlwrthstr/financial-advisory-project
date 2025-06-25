@@ -197,6 +197,16 @@ services:
       - kafka
       - opensearch
 
+  custodian-test:
+    build: ./custodian-test
+    container_name: custodian-test
+    ports:
+      - "8030:8030"
+    environment:
+      - SERVICE_NAME=custodian-test
+    depends_on:
+      - custodian-service
+
 volumes:
   kafka_data:
   mongo_data:

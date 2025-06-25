@@ -22,3 +22,6 @@
 [submodule "load-transaction-service"]
 	path = load-transaction-service
 	url = https://github.com/dnlwrthstr/load-transaction-service.git
+[submodule "custodian-test"]
+	path = custodian-test
+	url = ./custodian-test
